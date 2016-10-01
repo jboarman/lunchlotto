@@ -61,6 +61,16 @@ app.get('/lunchCrew/:lunchCrewName/destinations', (request, response) => {
     })
 })
 
+app.get('/lunchCrew/:lunchCrewName/currentDestinationWinner', (request, response) => {
+  dataService.getCurrentDestinationWinner(request.params.lunchCrewName)
+    .then(destinationWinner => {
+      response.send(destinationWinner)
+    })
+    .catch(error => {
+      response.status(500).send(error)
+    })
+})
+
 app.post('/lunchCrew', (request, response) => {
   var lunchCrew = new LunchCrew(request.body)
 
