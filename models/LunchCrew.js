@@ -9,6 +9,7 @@ module.exports = class LunchCrew {
     this._id = lunchCrew._id
     this.destinationOptions = lunchCrew.destinationOptions || []
     this.name = lunchCrew.name
+    this.currentWinningDestination = lunchCrew.currentWinningDestination
   }
 
   validate () {
