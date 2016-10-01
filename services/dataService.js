@@ -121,6 +121,32 @@ module.exports.insertDestinationOption = destinationOption => {
 }
 
 /**
+ * Update the current Winning Destination to a given LunchCrew.
+ *
+ * @param destinationOption {DestinationOption} The DestinationOption to insert.
+ *
+ * @return {Promise}
+ */
+module.exports.setWinningDestination = destinationOption => {
+  return new Promise((resolve, reject) => {
+    let collection = db.collection('lunchCrew')
+    let query = {name: destinationOption.lunchCrew}
+    let update = {$set: { currentWinningDestination: destinationOption.name }}
+
+    collection.update(
+      query,
+      update,
+      (error, result) => {
+        if (error) {
+          reject(error)
+          return
+        }
+        resolve(result)
+      })
+  })
+}
+
+/**
  * Gets Lunch Destinations for Lunch Crew.
  *
  * @return {Array} An array of DestionationOptions.
@@ -134,6 +160,60 @@ module.exports.getDestinationOptions = (lunchCrewName) => {
     collection.findOne(query)
       .then(document => {
         resolve(document.destinationOptions)
+      }).catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * Gets Current Lunch Destination Winner for Lunch Crew.
+ *
+ * @return {Array} Current Destionation winner.
+ */
+module.exports.pullLunchLottoLever = pullLunchLottoLever
+
+function pullLunchLottoLever (lunchCrewName) {
+  return new Promise((resolve, reject) => {
+    let collection = db.collection('lunchCrew')
+    let query = {name: lunchCrewName}
+
+    collection.findOne(query)
+      .then(document => {
+        // random magic to choose winning destination goes here
+        let winningOption = document.destinationOptions[0] // #magic!
+        resolve(winningOption)
+        return
+      }).catch(error => {
+        reject(error)
+      })
+  })
+}
+
+/**
+ * Gets Current Lunch Destination Winner for Lunch Crew.
+ *
+ * @return {Array} Current Destionation winner.
+ */
+module.exports.getCurrentDestinationWinner = (lunchCrewName) => {
+  return new Promise((resolve, reject) => {
+    let collection = db.collection('lunchCrew')
+    let query = {name: lunchCrewName}
+
+    collection.findOne(query)
+      .then(document => {
+        // return the current winning destination, _if_ it's populated
+        if (!!document.currentWinningDestination) {
+          resolve(document.currentWinningDestination)
+          return
+        }
+      })
+      .then(document => {
+        // random magic to choose winning destination goes here, _if_ not already set
+        pullLunchLottoLever(lunchCrewName).then(winningOption => {
+          resolve(winningOption)
+        })
+        return
       }).catch(error => {
         reject(error)
       })
