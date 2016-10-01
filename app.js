@@ -105,19 +105,17 @@ dataService.connect(config.dbUrl)
     console.error(error)
   })
 
-io.of('/socket').on('connection', (socket) => {
-  socket.emit('hello', {hello: 'Welcome to Lunch Lotto'})
+io.on('connection', (socket) => {
+  socket.on('join room', (lunchCrewName) => {
+    socket.join(lunchCrewName)
+    dataService.getDestinationOptions(lunchCrewName).then(destinationOptions => { socket.emmit('destination options', destinationOptions) })
+  })
 
-  socket.on('update_destinations', (lunchCrew) => {
-    dataService.getDestinationOptions(lunchCrew)
-    .then(destinationOptions => {
-      console.log(`Destinations for '${lunchCrew}' are '${destinationOptions}'`)
-      socket.emit('update_destinations', destinationOptions)
-    })
-    .catch(error => {
-      socket.status(500).send(error)
-    })
+  socket.on('pull lever', (lunchCrewName) => {
+    console.log(`pull the lever for ${lunchCrewName}.`)
+  })
 
-    console.log(`Destinations were requested for '${lunchCrew}`)
+  socket.on('add destination', (data) => {
+    console.log(`add ${data.destination} option to ${data.lunchCrewName}.`)
   })
 })
