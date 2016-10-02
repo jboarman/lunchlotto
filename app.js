@@ -120,6 +120,7 @@ dataService.connect(config.dbUrl)
 
 io.on('connection', (socket) => {
   socket.on('join room', (lunchCrewName) => {
+    console.log(`join room ${lunchCrewName}`)
     socket.join(lunchCrewName)
     dataService.getDestinationOptions(lunchCrewName).then(destinationOptions => { socket.emit('destination options', destinationOptions) })
   })
