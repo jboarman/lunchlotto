@@ -134,8 +134,9 @@ function pullLunchLottoLever (lunchCrewName) {
 
     collection.findOne(query)
       .then(document => {
-        // random magic to choose winning destination goes here
-        let winningOption = document.destinationOptions[0] // #magic!
+        // pick random number between 0 and length of destination options array.
+        let random = Math.floor((Math.random() * document.destinationOptions.length) + 0)
+        let winningOption = document.destinationOptions[random] // #magic!
         resolve(winningOption)
         return
       }).catch(error => {
