@@ -146,7 +146,7 @@ io.on('connection', (socket) => {
   socket.on('pull lever', (lunchCrewName) => {
     console.log(`pull lever event called for the ${lunchCrewName}.`)
     dataService.pullLunchLottoLever(lunchCrewName).then(winningOption => {
-      dataService.setWinningDestination(lunchCrewName).then(mongoReciept => {
+      dataService.setWinningDestination({lunchCrewName: lunchCrewName, destination: winningOption}).then(mongoReciept => {
         io.to(lunchCrewName).emit('winning option', winningOption)
       })
     })
