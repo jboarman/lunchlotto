@@ -72,7 +72,7 @@ app.get('/lunchCrew/:lunchCrewName/currentDestinationWinner', (request, response
 })
 
 app.post('/lunchCrew', (request, response) => {
-  var lunchCrew = new LunchCrew(request.body)
+  const lunchCrew = new LunchCrew(request.body)
 
   if (!lunchCrew.validate()) {
     response.status(400).send(`Failed to validate ${JSON.stringify(request.body)}.`)
@@ -89,7 +89,7 @@ app.post('/lunchCrew', (request, response) => {
 })
 
 app.post('/destination', (request, response) => {
-  var destinationOption = new DestinationOption(request.body)
+  const destinationOption = new DestinationOption(request.body)
 
   if (!destinationOption.validate()) {
     response.status(400).send(`Failed to validate ${JSON.stringify(request.body)}.`)
@@ -131,7 +131,7 @@ io.on('connection', (socket) => {
 
   socket.on('add destination', (data) => {
     console.log(`add destination event called to add ${data.destination} option to ${data.lunchCrewName}.`)
-    dataService.insertDestinationOption().then(mongoReciept => {
+    dataService.insertDestinationOption(data).then(mongoReciept => {
       dataService.getDestinationOptions(data.lunchCrewName).then(options => {
         socket.emit('destination options', options)
       })
