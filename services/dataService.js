@@ -127,7 +127,7 @@ module.exports.insertDestinationOption = destinationOption => {
  *
  * @return {Promise}
  */
-module.exports.setWinningDestination = destinationOption => {
+function setWinningDestination (destinationOption ) {
   return new Promise((resolve, reject) => {
     let collection = db.collection('lunchCrew')
     let query = {name: destinationOption.lunchCrew}
@@ -171,8 +171,6 @@ module.exports.getDestinationOptions = (lunchCrewName) => {
  *
  * @return {Array} Current Destionation winner.
  */
-module.exports.pullLunchLottoLever = pullLunchLottoLever
-
 function pullLunchLottoLever (lunchCrewName) {
   return new Promise((resolve, reject) => {
     let collection = db.collection('lunchCrew')
@@ -202,18 +200,19 @@ module.exports.getCurrentDestinationWinner = (lunchCrewName) => {
 
     collection.findOne(query)
       .then(document => {
-        // return the current winning destination, _if_ it's populated
         if (!!document.currentWinningDestination) {
+          // return the current winning destination, _if_ it's populated
           resolve(document.currentWinningDestination)
-          return
+        } else {
+          // random magic to choose winning destination goes here, _if_ not already set
+          pullLunchLottoLever(lunchCrewName)
+            .then(winningOption => {
+              setWinningDestination(winningOption)
+              .then(writeStatus => {
+                resolve(winningOption)
+              })
+            })
         }
-      })
-      .then(document => {
-        // random magic to choose winning destination goes here, _if_ not already set
-        pullLunchLottoLever(lunchCrewName).then(winningOption => {
-          resolve(winningOption)
-        })
-        return
       }).catch(error => {
         reject(error)
       })
