@@ -99,7 +99,7 @@ app.post('/destination', (request, response) => {
   dataService.insertDestinationOption(destinationOption)
     .then(() => {
       dataService.getDestinationOptions(destinationOption.lunchCrewName).then(destinationOptions => {
-        io.to(destinationOption.lunchCrewName).emmit('destination options', destinationOptions)
+        io.to(destinationOption.lunchCrewName).emit('destination options', destinationOptions)
       })
       response.sendStatus(200)
     })
@@ -121,7 +121,7 @@ dataService.connect(config.dbUrl)
 io.on('connection', (socket) => {
   socket.on('join room', (lunchCrewName) => {
     socket.join(lunchCrewName)
-    dataService.getDestinationOptions(lunchCrewName).then(destinationOptions => { socket.emmit('destination options', destinationOptions) })
+    dataService.getDestinationOptions(lunchCrewName).then(destinationOptions => { socket.emit('destination options', destinationOptions) })
   })
 
   socket.on('pull lever', (lunchCrewName) => {
@@ -132,7 +132,7 @@ io.on('connection', (socket) => {
     console.log(`add destination event called to add ${data.destination} option to ${data.lunchCrewName}.`)
     dataService.insertDestinationOption().then(mongoReciept => {
       dataService.getDestinationOptions(data.lunchCrewName).then(options => {
-        socket.emmit('destination options', options)
+        socket.emit('destination options', options)
       })
     })
   })
