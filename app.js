@@ -133,7 +133,7 @@ io.on('connection', (socket) => {
     console.log(`add destination event called to add ${data.destination} option to ${data.lunchCrewName}.`)
     dataService.insertDestinationOption(data).then(mongoReciept => {
       dataService.getDestinationOptions(data.lunchCrewName).then(options => {
-        socket.emit('destination options', data.destination)
+        io.to(data.lunchCrewName).emit('destination options', data.destination)
       })
     })
   })
