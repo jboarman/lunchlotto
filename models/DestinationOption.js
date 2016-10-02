@@ -6,11 +6,11 @@ module.exports = class DestinationOption {
       return
     }
 
-    this.lunchCrew = destinationOption.lunchCrew
+    this.lunchCrewName = destinationOption.lunchCrewName
     this.name = destinationOption.name
   }
 
   validate () {
-    return !!this.name && !!this.lunchCrew
+    return !!this.name && !!this.lunchCrewName
   }
 }
