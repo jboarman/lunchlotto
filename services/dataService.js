@@ -120,6 +120,31 @@ module.exports.insertDestinationOption = destinationOption => {
   })
 }
 
+module.exports.pullLunchLottoLever = pullLunchLottoLever
+
+/**
+ * Gets Current Lunch Destination Winner for Lunch Crew.
+ *
+ * @return {Array} Current Destionation winner.
+ */
+function pullLunchLottoLever (lunchCrewName) {
+  return new Promise((resolve, reject) => {
+    let collection = db.collection('lunchCrew')
+    let query = {name: lunchCrewName}
+
+    collection.findOne(query)
+      .then(document => {
+        // random magic to choose winning destination goes here
+        let winningOption = document.destinationOptions[0] // #magic!
+        resolve(winningOption)
+        return
+      }).catch(error => {
+        reject(error)
+      })
+  })
+}
+
+module.exports.setWinningDestination = setWinningDestination
 /**
  * Update the current Winning Destination to a given LunchCrew.
  *
@@ -160,28 +185,6 @@ module.exports.getDestinationOptions = (lunchCrewName) => {
     collection.findOne(query)
       .then(document => {
         resolve(document.destinationOptions)
-      }).catch(error => {
-        reject(error)
-      })
-  })
-}
-
-/**
- * Gets Current Lunch Destination Winner for Lunch Crew.
- *
- * @return {Array} Current Destionation winner.
- */
-function pullLunchLottoLever (lunchCrewName) {
-  return new Promise((resolve, reject) => {
-    let collection = db.collection('lunchCrew')
-    let query = {name: lunchCrewName}
-
-    collection.findOne(query)
-      .then(document => {
-        // random magic to choose winning destination goes here
-        let winningOption = document.destinationOptions[0] // #magic!
-        resolve(winningOption)
-        return
       }).catch(error => {
         reject(error)
       })

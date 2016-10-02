@@ -71,6 +71,18 @@ app.get('/lunchCrew/:lunchCrewName/currentDestinationWinner', (request, response
     })
 })
 
+app.post('/lunchCrew/:lunchCrewName/currentDestinationWinner', (request, response) => {
+  dataService.pullLunchLottoLever(request.params.lunchCrewName).then(winningOption => {
+    dataService.setWinningDestination(request.params.lunchCrewName).then(mongoReciept => {
+      response.send(winningOption)
+    }).catch(error => {
+      response.status(500).send(error)
+    })
+  }).catch(error => {
+    response.status(500).send(error)
+  })
+})
+
 app.post('/lunchCrew', (request, response) => {
   const lunchCrew = new LunchCrew(request.body)
 
@@ -126,10 +138,18 @@ io.on('connection', (socket) => {
       .then(destinationOptions => {
         socket.emit('destination options', destinationOptions)
       })
+    dataService.getCurrentDestinationWinner(lunchCrewName).then(winningOption => {
+      io.to(lunchCrewName).emit('winning option', winningOption)
+    })
   })
 
   socket.on('pull lever', (lunchCrewName) => {
     console.log(`pull lever event called for the ${lunchCrewName}.`)
+    dataService.pullLunchLottoLever(lunchCrewName).then(winningOption => {
+      dataService.setWinningDestination(lunchCrewName).then(mongoReciept => {
+        io.to(lunchCrewName).emit('winning option', winningOption)
+      })
+    })
   })
 
   socket.on('add destination', (data) => {
@@ -142,4 +162,4 @@ io.on('connection', (socket) => {
     })
   })
 })
- 
+
