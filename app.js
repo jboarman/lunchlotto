@@ -136,16 +136,27 @@ io.on('connection', (socket) => {
 
     dataService.getLunchCrew(lunchCrewName).then(data => {
       if (data == null) {
-        dataService.insertLunchCrew(lunchCrewName)
+        // this is duplicate code plz remove
+        dataService.insertLunchCrew({name: lunchCrewName}).then(
+          data => {
+            socket.join(lunchCrewName)
+            dataService.getDestinationOptions(lunchCrewName).then(destinationOptions => {
+              socket.emit('destination options', destinationOptions)
+            })
+            dataService.getCurrentDestinationWinner(lunchCrewName).then(winningOption => {
+              io.to(lunchCrewName).emit('winning option', winningOption)
+            })
+          }
+        )
+      } else {
+        socket.join(lunchCrewName)
+        dataService.getDestinationOptions(lunchCrewName).then(destinationOptions => {
+          socket.emit('destination options', destinationOptions)
+        })
+        dataService.getCurrentDestinationWinner(lunchCrewName).then(winningOption => {
+          io.to(lunchCrewName).emit('winning option', winningOption)
+        })
       }
-      socket.join(lunchCrewName)
-      dataService.getDestinationOptions(lunchCrewName)
-      .then(destinationOptions => {
-        socket.emit('destination options', destinationOptions)
-      })
-      dataService.getCurrentDestinationWinner(lunchCrewName).then(winningOption => {
-        io.to(lunchCrewName).emit('winning option', winningOption)
-      })
     })
   })
 

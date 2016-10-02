@@ -65,6 +65,10 @@ module.exports.getLunchCrew = (lunchCrewName) => {
 
     collection.findOne(query)
       .then(document => {
+        if (document == null) {
+          resolve(null)
+          return
+        }
         resolve(new LunchCrew(document))
       }).catch(error => {
         reject(error)
@@ -134,6 +138,10 @@ function pullLunchLottoLever (lunchCrewName) {
 
     collection.findOne(query)
       .then(document => {
+        if (document.destinationOptions == null || document.length === 0) {
+          resolve(null)
+          return
+        }
         // pick random number between 0 and length of destination options array.
         let random = Math.floor((Math.random() * document.destinationOptions.length) + 0)
         let winningOption = document.destinationOptions[random] // #magic!
@@ -185,6 +193,10 @@ module.exports.getDestinationOptions = (lunchCrewName) => {
 
     collection.findOne(query)
       .then(document => {
+        if (document == null) {
+          resolve(null)
+          return
+        }
         resolve(document.destinationOptions)
       }).catch(error => {
         reject(error)
