@@ -73,7 +73,7 @@ app.get('/lunchCrew/:lunchCrewName/currentDestinationWinner', (request, response
 
 app.post('/lunchCrew/:lunchCrewName/currentDestinationWinner', (request, response) => {
   dataService.pullLunchLottoLever(request.params.lunchCrewName).then(winningOption => {
-    dataService.setWinningDestination(request.params.lunchCrewName).then(mongoReciept => {
+    dataService.setWinningDestination({lunchCrewName: request.params.lunchCrewName, destination: request.params.winningOption}).then(mongoReciept => {
       response.send(winningOption)
     }).catch(error => {
       response.status(500).send(error)

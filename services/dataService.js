@@ -153,11 +153,11 @@ module.exports.setWinningDestination = setWinningDestination
  *
  * @return {Promise}
  */
-function setWinningDestination (destinationOption) {
+function setWinningDestination (data) {
   return new Promise((resolve, reject) => {
     let collection = db.collection('lunchCrew')
-    let query = {name: destinationOption.lunchCrewName}
-    let update = {$set: { currentWinningDestination: destinationOption.destination }}
+    let query = {name: data.lunchCrewName}
+    let update = {$set: { currentWinningDestination: data.destination }}
 
     collection.update(
       query,
@@ -211,7 +211,7 @@ module.exports.getCurrentDestinationWinner = (lunchCrewName) => {
           // random magic to choose winning destination goes here, _if_ not already set
           pullLunchLottoLever(lunchCrewName)
             .then(winningOption => {
-              setWinningDestination(winningOption)
+              setWinningDestination({lunchCrewName: lunchCrewName, destination: winningOption})
               .then(writeStatus => {
                 resolve(winningOption)
               })
