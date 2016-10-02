@@ -133,13 +133,19 @@ dataService.connect(config.dbUrl)
 io.on('connection', (socket) => {
   socket.on('join room', (lunchCrewName) => {
     console.log(`join room ${lunchCrewName}`)
-    socket.join(lunchCrewName)
-    dataService.getDestinationOptions(lunchCrewName)
+
+    dataService.getLunchCrew(lunchCrewName).then(data => {
+      if (data == null) {
+        dataService.insertLunchCrew(lunchCrewName)
+      }
+      socket.join(lunchCrewName)
+      dataService.getDestinationOptions(lunchCrewName)
       .then(destinationOptions => {
         socket.emit('destination options', destinationOptions)
       })
-    dataService.getCurrentDestinationWinner(lunchCrewName).then(winningOption => {
-      io.to(lunchCrewName).emit('winning option', winningOption)
+      dataService.getCurrentDestinationWinner(lunchCrewName).then(winningOption => {
+        io.to(lunchCrewName).emit('winning option', winningOption)
+      })
     })
   })
 
