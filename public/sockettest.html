@@ -1,13 +1,29 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
-  var socket = io.connect('/socket');
+  const socket = io.connect('/socket');
 
-  socket.on('hello', function (data) {
-    console.log(`hello event fired -- '${JSON.stringify(data)}'`);
-    socket.emit('update_destinations', 'The Dick Pick Gang');
+  const lunchCrewName = 'The Dick Pick Gange';
+
+  // get the list of destination options
+  socket.on('destination options', function (data) {
+    console.log(`'destination options' event fired -- '${JSON.stringify(data)}'`);
   });
 
-  socket.on('update_destinations', function (data) {
-    console.log(`update_destinations event fired -- '${JSON.stringify(data)}'`);
+  // get the winning destionation
+  socket.on('set winning destination', function (data) {
+    console.log(`'set winning destination' event fired -- '${JSON.stringify(data)}'`);
   });
+
+  // join the room with the room key
+  socket.emit('join room', lunchCrewName);
+
+  // add my fav restaurant to the destination options
+  socket.emit('add destination', {lunchCrewName: lunchCrewName, name: 'Taco Bell'} );
+
+  // pull the Lunch Lotto lever
+  socket.emit('pull lever', lunchCrewName);
+
 </script>
+
+
+
