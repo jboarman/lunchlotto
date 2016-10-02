@@ -105,7 +105,7 @@ module.exports.insertDestinationOption = destinationOption => {
   return new Promise((resolve, reject) => {
     let collection = db.collection('lunchCrew')
     let query = {name: destinationOption.lunchCrewName}
-    let update = {$addToSet: { destinationOptions: destinationOption.name }}
+    let update = {$addToSet: { destinationOptions: destinationOption.destination }}
 
     collection.update(
       query,
@@ -127,11 +127,11 @@ module.exports.insertDestinationOption = destinationOption => {
  *
  * @return {Promise}
  */
-function setWinningDestination (destinationOption ) {
+function setWinningDestination (destinationOption) {
   return new Promise((resolve, reject) => {
     let collection = db.collection('lunchCrew')
     let query = {name: destinationOption.lunchCrewName}
-    let update = {$set: { currentWinningDestination: destinationOption.name }}
+    let update = {$set: { currentWinningDestination: destinationOption.destination }}
 
     collection.update(
       query,
