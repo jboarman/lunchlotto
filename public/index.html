@@ -1,13 +1,66 @@
 <!doctype html>
 <html lang="en-us">
     <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta charset="utf-8">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      <title>socket tester</title>
+      <meta name="description" content="">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
-      <p>Hello World</p>
+      <h3>Socket Tester</h3>
+      <form>
+        <input type="text" id="event_name" value="add destination" />
+        <input type="text" id="payload_json" value='{"lunchCrewName": "The Dick Pick Gang", "destination": "Taco Bell"}' />
+        <input type="button" value="fire" onclick="fireEvent();" />        
+      </form>
+      <div id="log" style="font-family: Courier New; whitespace: pre; border-radius: 5px;  border: 1px solid #CCC; border-color: grey; padding: 5px" />
     </body>
+
+    <script>
+      // intercept console logger
+      var oldConsoleLog = console.log
+      var logger = document.getElementById('log')
+      console.log = function (message) {
+        if (typeof message == 'object') {
+            logger.innerHTML += (JSON && JSON.stringify ? JSON.stringify(message) : message) + '<br size="1" noshade="noshade" />'
+        } else {
+            logger.innerHTML += message + '<hr size="1" noshade="noshade" />'
+        }
+        oldConsoleLog (message)
+      }
+    </script>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io.connect()
+      const lunchCrewName = 'The Dick Pick Gang'
+
+      console.log(`initiating socket connection ... lunch crew '${lunchCrewName}'`)
+
+      // get the winning destionation
+      socket.on('winning option', function (data) {
+        console.log(`event fired 'set winning destination' -- '${JSON.stringify(data)}'`)
+      });
+
+      // get the list of destination options
+      socket.on('destination options', function (data) {
+        console.log(`event fired 'destination options' -- '${JSON.stringify(data)}'`)
+      });
+
+      // join the room with the room key
+      socket.emit('join room', lunchCrewName)
+
+      // generalized method that send event to server based on form element contents
+      function fireEvent()
+      {
+        let event_name = document.getElementById('event_name').value
+        let payload_json = document.getElementById('payload_json').value
+
+        socket.emit(event_name, JSON.parse(payload_json));
+
+        console.log(`event fired: '${event_name}' -- '${payload_json}'`)
+      }
+    </script>
+
 </html>

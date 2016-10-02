@@ -174,7 +174,7 @@ io.on('connection', (socket) => {
     dataService.insertDestinationOption(data).then(mongoReciept => {
       dataService.getDestinationOptions(data.lunchCrewName)
         .then(options => {
-          io.to(data.lunchCrewName).emit('destination options', data.destination)
+          io.to(data.lunchCrewName).emit('destination options', options)
         })
     })
   })
